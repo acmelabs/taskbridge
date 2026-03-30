@@ -173,4 +173,4 @@ and the worker immediately re-polls — acting as a built-in fallback.
 
 ## License
 
-[MIT](LICENSE)
+[Apache 2.0](LICENSE)
