@@ -1,0 +1,31 @@
+# Build output
+target/
+*.class
+
+# IDE
+.idea/
+*.iml
+*.eclipse
+.project
+.classpath
+.settings/
+.vscode/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Maven
+.mvn/timing.properties
+.mvn/wrapper/maven-wrapper.jar
+
+# Spring Boot
+spring-shell.log
+*.log
+logs/
+
+# Packaging
+*.jar
+*.war
+*.ear
+*.nar
