@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!--
+    Flowable's selectExternalWorkerJobsToExecute (flowable-job-service 7.2.0), plus one condition: an exclusive job is
+    left out while its process instance holds a live lock. The lock condition mirrors updateProcessInstanceLockTime,
+    which only locks an instance whose LOCK_TIME_ is null or earlier than now. Re-check against Flowable's statement
+    on every upgrade.
+-->
+<mapper namespace="app.acmelabs.taskbridge.server.acquire.ExclusiveAwareExternalWorkerJob">
+
+    <select id="selectExclusiveAwareExternalWorkerJobsToExecute" parameterType="org.flowable.common.engine.impl.db.ListQueryParameterObject"
+            resultMap="org.flowable.job.service.impl.persistence.entity.ExternalWorkerJobEntityImpl.externalWorkerJobResultMap">
+        <if test="needsPaging">${limitBefore}</if>
+        SELECT RES.* <if test="needsPaging">${limitBetween}</if>
+        from ${prefix}ACT_RU_EXTERNAL_JOB RES
+        <where>
+            and HANDLER_CFG_ = #{parameter.topic, jdbcType=NVARCHAR}
+            <if test="parameter.scopeType != null">
+                <choose>
+                    <when test="parameter.scopeType == 'bpmn'">
+                        and PROCESS_INSTANCE_ID_ is not null
+                    </when>
+                    <otherwise>
+                        and SCOPE_TYPE_ = #{parameter.scopeType, jdbcType=NVARCHAR}
+                    </otherwise>
+                </choose>
+            </if>
+            <if test="parameter.tenantId != null">
+                <choose>
+                    <when test="parameter.tenantId != ''">
+                        and TENANT_ID_ = #{parameter.tenantId, jdbcType=NVARCHAR}
+                    </when>
+                    <otherwise>
+                        and (TENANT_ID_ = '' or TENANT_ID_ is null)
+                    </otherwise>
+                </choose>
+            </if>
+            <trim prefix="AND (" prefixOverrides="OR" suffix=")">
+                <if test="parameter.authorizedUser != null">
+                    exists (select ID_ from ${prefix}ACT_RU_IDENTITYLINK IDN where IDN.SCOPE_ID_ = RES.CORRELATION_ID_ and IDN.SCOPE_TYPE_ = 'externalWorker' and IDN.USER_ID_ = #{parameter.authorizedUser, jdbcType=NVARCHAR})
+                </if>
+                <if test="parameter.authorizedGroups != null &amp;&amp; !parameter.authorizedGroups.empty">
+                    OR exists (select ID_ from ${prefix}ACT_RU_IDENTITYLINK IDN where IDN.SCOPE_ID_ = RES.CORRELATION_ID_ and IDN.SCOPE_TYPE_ = 'externalWorker' and IDN.GROUP_ID_ IN
+                    <foreach item="groupId" index="index" collection="parameter.authorizedGroups"
+                             open="(" separator="," close=")">
+                        #{groupId, jdbcType=NVARCHAR}
+                    </foreach>
+                    )
+                </if>
+            </trim>
+            and LOCK_EXP_TIME_ is null
+            and not exists (
+                select 1 from ${prefix}ACT_RU_EXECUTION PI
+                where RES.EXCLUSIVE_ = #{parameter.exclusive, jdbcType=BOOLEAN}
+                  and PI.ID_ = RES.PROCESS_INSTANCE_ID_
+                  and PI.LOCK_TIME_ is not null
+                  and PI.LOCK_TIME_ &gt;= #{parameter.now, jdbcType=TIMESTAMP}
+            )
+        </where>
+        ${orderBy}
+        <if test="needsPaging">${limitAfter}</if>
+    </select>
+
+</mapper>

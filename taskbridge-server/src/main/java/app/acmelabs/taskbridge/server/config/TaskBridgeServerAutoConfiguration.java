@@ -1,6 +1,7 @@
 package app.acmelabs.taskbridge.server.config;
 
 import app.acmelabs.taskbridge.server.ExternalJobCreatedListener;
+import app.acmelabs.taskbridge.server.acquire.ExclusiveAwareAcquire;
 import org.flowable.common.engine.api.delegate.event.FlowableEventListener;
 import org.flowable.spring.SpringProcessEngineConfiguration;
 import org.flowable.spring.boot.EngineConfigurationConfigurer;
@@ -35,5 +36,12 @@ public class TaskBridgeServerAutoConfiguration {
             merged.add(listener);
             config.setEventListeners(merged);
         };
+    }
+
+    @Bean
+    @ConditionalOnProperty(prefix = "taskbridge.server.exclusive-acquire", name = "enabled", havingValue = "true", matchIfMissing = true)
+    public EngineConfigurationConfigurer<SpringProcessEngineConfiguration> taskBridgeExclusiveAcquireConfigurer(
+            TaskBridgeServerProperties properties) {
+        return config -> ExclusiveAwareAcquire.install(config, properties.getExclusiveAcquire().getLookahead());
     }
 }
