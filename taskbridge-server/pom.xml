@@ -71,6 +71,17 @@
             <artifactId>spock-spring</artifactId>
             <scope>test</scope>
         </dependency>
+        <!-- SQL Server for the opt-in SqlServerAcquireBenchmarkSpec -->
+        <dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>mssqlserver</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.microsoft.sqlserver</groupId>
+            <artifactId>mssql-jdbc</artifactId>
+            <scope>test</scope>
+        </dependency>
         <!-- In-memory database for specs that run a real Flowable engine -->
         <dependency>
             <groupId>com.h2database</groupId>
