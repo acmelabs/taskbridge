@@ -1,7 +1,7 @@
 package app.acmelabs.taskbridge.client.client
 
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.databind.node.ObjectNode
+import tools.jackson.databind.ObjectMapper
+import tools.jackson.databind.node.ObjectNode
 import org.springframework.http.HttpMethod
 import org.springframework.http.MediaType
 import org.springframework.test.web.client.MockRestServiceServer
@@ -161,7 +161,7 @@ class FlowableRestClientSpec extends Specification {
         "instant"      | '"2025-01-01T00:00:00Z"'       | { it == Instant.parse("2025-01-01T00:00:00Z") }
         "localDate"    | '"2025-03-15"'                 | { it == LocalDate.of(2025, 3, 15) }
         "localDateTime"| '"2025-03-15T12:30:00"'        | { it == LocalDateTime.of(2025, 3, 15, 12, 30) }
-        "json"         | '{"key":"val"}'                | { it instanceof com.fasterxml.jackson.databind.JsonNode }
+        "json"         | '{"key":"val"}'                | { it instanceof tools.jackson.databind.JsonNode }
         "date"         | '"2025-01-01T00:00:00Z"'       | { it instanceof Date }
     }
 
@@ -242,21 +242,21 @@ class FlowableRestClientSpec extends Specification {
         def array = client.toVariableArray([v: value])
 
         then:
-        array[0].get("type").asText() == expectedType
+        array[0].get("type").asString() == expectedType
         valueCheck(array[0].get("value"))
 
         where:
         description     | value                                    | expectedType    | valueCheck
-        "String"        | "hello"                                  | "string"        | { it.asText() == "hello" }
+        "String"        | "hello"                                  | "string"        | { it.asString() == "hello" }
         "Integer"       | 42                                       | "integer"       | { it.asInt() == 42 }
         "Long"          | 99L                                      | "long"          | { it.asLong() == 99L }
         "Double"        | 1.5d                                     | "double"        | { it.asDouble() == 1.5d }
         "Boolean true"  | true                                     | "boolean"       | { it.asBoolean() }
         "Boolean false" | false                                    | "boolean"       | { !it.asBoolean() }
         "Short"         | (42 as Short)                            | "short"         | { it.shortValue() == 42 }
-        "Instant"       | Instant.parse("2025-01-01T00:00:00Z")   | "instant"       | { it.asText() == "2025-01-01T00:00:00Z" }
-        "LocalDate"     | LocalDate.of(2025, 3, 15)               | "localDate"     | { it.asText() == "2025-03-15" }
-        "LocalDateTime" | LocalDateTime.of(2025, 3, 15, 12, 0)   | "localDateTime" | { it.asText() == "2025-03-15T12:00" }
+        "Instant"       | Instant.parse("2025-01-01T00:00:00Z")   | "instant"       | { it.asString() == "2025-01-01T00:00:00Z" }
+        "LocalDate"     | LocalDate.of(2025, 3, 15)               | "localDate"     | { it.asString() == "2025-03-15" }
+        "LocalDateTime" | LocalDateTime.of(2025, 3, 15, 12, 0)   | "localDateTime" | { it.asString() == "2025-03-15T12:00" }
         "JsonNode"      | new ObjectMapper().createObjectNode()   | "json"          | { !it.isNull() }
         "POJO"          | [a: 1]                                  | "json"          | { it.isObject() }
     }
@@ -269,8 +269,8 @@ class FlowableRestClientSpec extends Specification {
         def array = client.toVariableArray([d: date])
 
         then:
-        array[0].get("type").asText() == "date"
-        array[0].get("value").asText() == "2025-06-01T12:00:00Z"
+        array[0].get("type").asString() == "date"
+        array[0].get("value").asString() == "2025-06-01T12:00:00Z"
     }
 
     def "toVariableArray preserves variable ordering"() {
@@ -278,7 +278,7 @@ class FlowableRestClientSpec extends Specification {
         def array = client.toVariableArray([z: "last", a: "first", m: "mid"])
 
         then:
-        [array[0].get("name").asText(), array[1].get("name").asText(), array[2].get("name").asText()] == ["z", "a", "m"]
+        [array[0].get("name").asString(), array[1].get("name").asString(), array[2].get("name").asString()] == ["z", "a", "m"]
     }
 
     def "toVariableArray returns empty array for null map"() {

@@ -1,11 +1,13 @@
 # TaskBridge
 
-Redis-signalled external worker library for Flowable — Java 21, Spring Boot 3.5.
+Redis-signalled external worker library for Flowable — Java 21, Spring Boot 4, Flowable 8, Jackson 3.
+
+`main` is the 2.x line (Boot 4). The `1.x` branch keeps Boot 3.5 / Flowable 7 / Jackson 2 support; fixes that apply to both go on both branches.
 
 ## Project structure
 
 ```
-taskbridge/                        ← parent POM (app.acmelabs.taskbridge:taskbridge:1.0.0-SNAPSHOT)
+taskbridge/                        ← parent POM (app.acmelabs.taskbridge:taskbridge:2.0.0-SNAPSHOT)
 ├── taskbridge-server/             ← Flowable-side: publishes Redis signals on job creation
 └── taskbridge-client/             ← Worker-side: subscribes to signals, acquires and dispatches jobs
 ```
@@ -47,7 +49,7 @@ mvn test -pl taskbridge-client  # client only
 
 **Wakeup coalescing**: Redis signals are absorbed by a `Semaphore(0)`. `tryAcquire(fallbackPollIntervalMs)` serves as both the wakeup listener and the fallback timer. When a full batch is returned (`jobs.size() >= maxJobs`), the subscription releases the semaphore immediately to trigger a follow-up acquire without waiting.
 
-**Flowable variable mapping**: The REST client maps 11 types: `string`, `short`, `integer`, `long`, `double`, `boolean`, `date`, `instant`, `localDate`, `localDateTime`, `json`. Unknown types fall back to `json` via `objectMapper.valueToTree()`.
+**Flowable variable mapping**: The REST client maps 11 types: `string`, `short`, `integer`, `long`, `double`, `boolean`, `date`, `instant`, `localDate`, `localDateTime`, `json`. Unknown types fall back to `json` via `objectMapper.valueToTree()` (Jackson 3, `tools.jackson.*`).
 
 **BPMN vs CMMN detection**: Acquire response fields differ. If `processInstanceId` is present → BPMN (`executionId`→`subScopeId`, `processDefinitionId`→`scopeDefinitionId`). Otherwise CMMN with direct `scopeId`/`scopeType`/`subScopeId`/`scopeDefinitionId`.
 
@@ -55,7 +57,7 @@ mvn test -pl taskbridge-client  # client only
 
 ## Test framework
 
-Spock 2.3 (Groovy 4.0), compiled by gmavenplus-plugin 3.0.2. All test classes are `*Spec`. Java helper fixtures (e.g. `TestWorkerBeans.java`) live in `src/test/java`.
+Spock 2.4 (Groovy 5.0), compiled by gmavenplus-plugin 4.3.1. All test classes are `*Spec`. Java helper fixtures (e.g. `TestWorkerBeans.java`) live in `src/test/java`.
 
 **Async test pattern**: Never use `1 * mock.method()` in `then:` for calls that happen on background virtual threads — the call may have already fired before `then:` registers the interaction, yielding spurious "0 invocations". Instead capture results via `LinkedBlockingQueue` / `AtomicReference` in `given:`, block in `when:` (`queue.poll(2, SECONDS)`), and assert captured values in `then:`.
 

@@ -4,7 +4,7 @@ import app.acmelabs.taskbridge.client.dto.AcquiredJob;
 import app.acmelabs.taskbridge.client.result.ExternalWorkerResult;
 import app.acmelabs.taskbridge.client.result.ExternalWorkerResultBuilder;
 import app.acmelabs.taskbridge.client.result.WorkerSuccess;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.ObjectMapper;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;

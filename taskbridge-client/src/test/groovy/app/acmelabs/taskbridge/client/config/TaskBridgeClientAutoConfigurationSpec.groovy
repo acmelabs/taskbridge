@@ -5,7 +5,7 @@ import app.acmelabs.taskbridge.client.worker.ExternalWorkerBeanPostProcessor
 import app.acmelabs.taskbridge.client.worker.TaskBridgeLifecycle
 import app.acmelabs.taskbridge.client.worker.WorkerEndpointRegistry
 import app.acmelabs.taskbridge.client.worker.WorkerMethodInvoker
-import com.fasterxml.jackson.databind.ObjectMapper
+import tools.jackson.databind.ObjectMapper
 import org.springframework.beans.factory.ObjectProvider
 import org.springframework.data.redis.connection.RedisConnectionFactory
 import org.springframework.data.redis.listener.RedisMessageListenerContainer

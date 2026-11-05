@@ -1,7 +1,7 @@
 package app.acmelabs.taskbridge.client.result
 
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.databind.node.ObjectNode
+import tools.jackson.databind.ObjectMapper
+import tools.jackson.databind.node.ObjectNode
 import spock.lang.Specification
 
 class ExternalWorkerResultBuilderSpec extends Specification {
@@ -97,7 +97,7 @@ class ExternalWorkerResultBuilderSpec extends Specification {
 
         then:
         result.variables["payload"] instanceof ObjectNode
-        (result.variables["payload"] as ObjectNode).get("name").asText() == "Alice"
+        (result.variables["payload"] as ObjectNode).get("name").asString() == "Alice"
         (result.variables["payload"] as ObjectNode).get("age").asInt() == 30
     }
 

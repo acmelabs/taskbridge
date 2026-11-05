@@ -1,10 +1,10 @@
 package app.acmelabs.taskbridge.client.client;
 
 import app.acmelabs.taskbridge.client.dto.AcquiredJob;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.node.ArrayNode;
+import tools.jackson.databind.node.ObjectNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
@@ -179,16 +179,16 @@ public class FlowableRestClient {
             return null;
         }
         return switch (type) {
-            case "string"        -> value.asText();
+            case "string"        -> value.asString();
             case "short"         -> value.shortValue();
             case "integer"       -> value.asInt();
             case "long"          -> value.asLong();
             case "double"        -> value.asDouble();
             case "boolean"       -> value.asBoolean();
-            case "date"          -> Date.from(Instant.parse(value.asText()));
-            case "instant"       -> Instant.parse(value.asText());
-            case "localDate"     -> LocalDate.parse(value.asText());
-            case "localDateTime" -> LocalDateTime.parse(value.asText());
+            case "date"          -> Date.from(Instant.parse(value.asString()));
+            case "instant"       -> Instant.parse(value.asString());
+            case "localDate"     -> LocalDate.parse(value.asString());
+            case "localDateTime" -> LocalDateTime.parse(value.asString());
             case "json"          -> value;
             default -> {
                 log.warn("Unknown variable type '{}', skipping", type);
@@ -248,7 +248,7 @@ public class FlowableRestClient {
 
     private static String str(ObjectNode node, String field) {
         JsonNode n = node.path(field);
-        return (n.isMissingNode() || n.isNull()) ? null : n.asText();
+        return (n.isMissingNode() || n.isNull()) ? null : n.asString();
     }
 
     private static Instant instant(String value) {

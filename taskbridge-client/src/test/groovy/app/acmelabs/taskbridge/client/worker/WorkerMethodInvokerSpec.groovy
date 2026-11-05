@@ -6,7 +6,7 @@ import app.acmelabs.taskbridge.client.result.ExternalWorkerResultBuilder
 import app.acmelabs.taskbridge.client.result.WorkerBpmnError
 import app.acmelabs.taskbridge.client.result.WorkerFailure
 import app.acmelabs.taskbridge.client.result.WorkerSuccess
-import com.fasterxml.jackson.databind.ObjectMapper
+import tools.jackson.databind.ObjectMapper
 import spock.lang.Specification
 
 class WorkerMethodInvokerSpec extends Specification {

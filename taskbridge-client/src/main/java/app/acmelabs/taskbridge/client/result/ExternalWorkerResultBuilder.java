@@ -1,6 +1,6 @@
 package app.acmelabs.taskbridge.client.result;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.ObjectMapper;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;

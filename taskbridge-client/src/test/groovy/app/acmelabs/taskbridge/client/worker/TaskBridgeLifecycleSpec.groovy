@@ -2,7 +2,7 @@ package app.acmelabs.taskbridge.client.worker
 
 import app.acmelabs.taskbridge.client.client.FlowableRestClient
 import app.acmelabs.taskbridge.client.config.TaskBridgeClientProperties
-import com.fasterxml.jackson.databind.ObjectMapper
+import tools.jackson.databind.ObjectMapper
 import org.springframework.beans.factory.ObjectProvider
 import org.springframework.data.redis.listener.RedisMessageListenerContainer
 import spock.lang.Specification

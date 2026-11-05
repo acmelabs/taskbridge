@@ -279,7 +279,6 @@ class TopicSubscriptionSpec extends Specification {
 
         def fullBatch = (1..4).collect { job("job-$it", 3) }
         invoker.invoke(*_) >> new WorkerSuccess()
-        flowableClient.completeJob(*_) >> null
         flowableClient.acquireJobs(*_) >> {
             int n = callCount.incrementAndGet()
             if (n == 2) secondCallLatch.countDown()
@@ -314,7 +313,6 @@ class TopicSubscriptionSpec extends Specification {
 
         def jobs = (1..4).collect { job("job-$it", 3) }
         flowableClient.acquireJobs(*_) >>> [jobs, []]
-        flowableClient.completeJob(*_) >> null
 
         invoker.invoke(*_) >> {
             int cur = runningCount.incrementAndGet()

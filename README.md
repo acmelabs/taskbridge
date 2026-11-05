@@ -300,9 +300,14 @@ Attribute values of `-1` (for numeric fields) and `""` (for `lockDuration`) mean
 ## Requirements
 
 - Java 21
-- Spring Boot 3.5+
-- Flowable OSS 7.x (server module only)
 - Redis (required by both modules)
+
+Pick the TaskBridge version that matches your Spring Boot version:
+
+| TaskBridge | Spring Boot | Flowable OSS (server module) | Jackson | Branch |
+|------------|-------------|------------------------------|---------|--------|
+| 2.x        | 4.x         | 8.x                          | 3.x     | `main` |
+| 1.x        | 3.5.x       | 7.x                          | 2.x     | `1.x`  |
 
 ## Contributing
 
